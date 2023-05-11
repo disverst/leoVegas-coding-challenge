@@ -14,31 +14,33 @@
     .movies-grid {
         display: flex;
         flex-wrap: wrap;
-        
+      
         @media (max-width: 1020px) {
-          .wrapper {
-            flex-basis: calc(33.33% - 12px);
-            max-width: calc(33.33% - 12px);
-          }
+            .wrapper {
+            flex-basis: 25%;
+            max-width: 25%;
+            }
         }
-
+      
         @media (max-width: 800px) {
             .wrapper {
-              flex-basis: calc(50% - 12px);
-              max-width: calc(50% - 12px);
+            flex-basis: 50%;
+            max-width: 50%;
             }
         }
-
+      
         @media (max-width: 480px) {
             .wrapper {
-              flex-basis: 100%;
-              max-width: 100%;
+            flex-basis: 100%;
+            max-width: 100%;
             }
         }
-
+        
     }
 
     .wrapper {
+        flex-basis: 20%;
+        max-width: 20%;
         padding: 0 6px;
         margin-bottom: 2rem;
     }

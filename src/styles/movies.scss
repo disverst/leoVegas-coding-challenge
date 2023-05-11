@@ -11,6 +11,33 @@
         text-decoration: none;
     }
 
+    .movies-grid {
+        display: flex;
+        flex-wrap: wrap;
+        
+        @media (max-width: 1020px) {
+          .wrapper {
+            flex-basis: calc(33.33% - 12px);
+            max-width: calc(33.33% - 12px);
+          }
+        }
+
+        @media (max-width: 800px) {
+            .wrapper {
+              flex-basis: calc(50% - 12px);
+              max-width: calc(50% - 12px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .wrapper {
+              flex-basis: 100%;
+              max-width: 100%;
+            }
+        }
+
+    }
+
     .wrapper {
         padding: 0 6px;
         margin-bottom: 2rem;

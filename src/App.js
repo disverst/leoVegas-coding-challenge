@@ -5,7 +5,8 @@ import 'reactjs-popup/dist/index.css'
 import { fetchMovies } from './data/moviesSlice'
 import { ENDPOINT_SEARCH, ENDPOINT_DISCOVER, ENDPOINT, API_KEY } from './constants'
 import Header from './components/Header'
-import Modal from './components/Modal';
+import Loader from './components/Loader'
+import Modal from './components/Modal'
 import Movies from './components/Movies'
 import Starred from './components/Starred'
 import WatchLater from './components/WatchLater'
@@ -17,6 +18,7 @@ const App = () => {
   const { movies } = state  
   const dispatch = useDispatch()
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams()
   const searchQuery = searchParams.get('search')
   const [videoKey, setVideoKey] = useState(null)
@@ -46,7 +48,8 @@ const App = () => {
       ? `${ENDPOINT_SEARCH}&query=${searchQuery}&page=${currentPage}`
       : `${ENDPOINT_DISCOVER}&page=${currentPage}`;
 
-    dispatch(fetchMovies(fetchMoviesQuery));
+    dispatch(fetchMovies(fetchMoviesQuery))
+    setLoading(false)
   };
 
   getMovies();
@@ -57,16 +60,17 @@ const App = () => {
       window.innerHeight + document.documentElement.scrollTop + 1 >=
       document.documentElement.scrollHeight
     ) {
+      setLoading(true)
       setCurrentPage((prev) => prev + 1);
     }
   };
   
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll)
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [])
   
   const viewTrailer = (movie) => {
     getMovie(movie.id)
@@ -99,6 +103,7 @@ const App = () => {
           <Route path="/watch-later" element={<WatchLater viewTrailer={viewTrailer} />} />
           <Route path="*" element={<h1 className="not-found">Page Not Found</h1>} />
         </Routes>
+        {loading && <Loader />}
       </div>
     </div>
   )

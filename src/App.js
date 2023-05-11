@@ -16,6 +16,7 @@ const App = () => {
   const state = useSelector((state) => state)
   const { movies } = state  
   const dispatch = useDispatch()
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchParams, setSearchParams] = useSearchParams()
   const searchQuery = searchParams.get('search')
   const [videoKey, setVideoKey] = useState(null)
@@ -23,10 +24,6 @@ const App = () => {
   const navigate = useNavigate()
   
   const closeModal = () => setOpen(false)
-  
-  const closeCard = () => {
-
-  }
 
   const getSearchResults = (query) => {
     if (query !== '') {
@@ -43,14 +40,34 @@ const App = () => {
     getSearchResults(query)
   }
 
-  const getMovies = () => {
-    if (searchQuery) {
-        dispatch(fetchMovies(`${ENDPOINT_SEARCH}&query=`+searchQuery))
-    } else {
-        dispatch(fetchMovies(ENDPOINT_DISCOVER))
-    }
-  }
+  useEffect(() => {
+  const getMovies = async () => {
+    const fetchMoviesQuery = searchQuery
+      ? `${ENDPOINT_SEARCH}&query=${searchQuery}&page=${currentPage}`
+      : `${ENDPOINT_DISCOVER}&page=${currentPage}`;
 
+    dispatch(fetchMovies(fetchMoviesQuery));
+  };
+
+  getMovies();
+}, [searchQuery, currentPage, dispatch]);
+
+  const handleScroll = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop + 1 >=
+      document.documentElement.scrollHeight
+    ) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
+  
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+  
   const viewTrailer = (movie) => {
     getMovie(movie.id)
     if (!videoKey) setOpen(true)
@@ -70,10 +87,6 @@ const App = () => {
     }
   }
 
-  useEffect(() => {
-    getMovies()
-  }, [])
-
   return (
     <div className="App">
       <Header searchMovies={searchMovies} searchParams={searchParams} setSearchParams={setSearchParams} />
@@ -81,7 +94,7 @@ const App = () => {
       <div className="container">
         <Modal isOpen={isOpen} closeModal={closeModal} videoKey={videoKey} />
         <Routes>
-          <Route path="/" element={<Movies movies={movies} viewTrailer={viewTrailer} closeCard={closeCard} />} />
+          <Route path="/" element={<Movies movies={movies} viewTrailer={viewTrailer} />} />
           <Route path="/starred" element={<Starred viewTrailer={viewTrailer} />} />
           <Route path="/watch-later" element={<WatchLater viewTrailer={viewTrailer} />} />
           <Route path="*" element={<h1 className="not-found">Page Not Found</h1>} />
